@@ -1,36 +1,122 @@
-
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
     background-color: #f4f4f4;
+    color: #333;
 }
+
+h1 {
+    background-color: #007bff;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
 form {
+    max-width: 600px;
+    margin: 0 auto;
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: 16px;
 }
+
 input[type="file"] {
-    margin-bottom: 10px;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
 }
+
 input[type="submit"] {
-    background-color: #4CAF50;
+    width: 100%;
+    background-color: #28a745;
     color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
+    padding: 12px 20px;
+    margin: 10px 0;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
-    box-shadow: 0 5px #999;
-}
-input[type="submit"]:hover {
-    background-color: #45a049;
-}
-input[type="submit"]:active {
-    background-color: #3e8e41;
-    box-shadow: 0 2px #666;
-    transform: translateY(4px);
+    font-size: 18px;
+    transition: background-color 0.3s ease;
 }
 
+input[type="submit"]:hover {
+    background-color: #218838;
+}
+
+input[type="submit"]:active {
+    background-color: #1e7e34;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    form {
+        padding: 10px;
+    }
+}
+
+#drop-area {
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    width: 80%;
+    margin: 10vh auto;
+    padding: 20px;
+  }
+  
+  .highlight {
+    border-color: purple;
+  }
+  
+  .my-form {
+    margin-bottom: 10px;
+  }
+  
+  #gallery {
+    margin-top: 10px;
+  }
+  
+  #gallery img {
+    width: 150px;
+    margin-top: 10px;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  
+  .button {
+    display: inline-block;
+    padding: 10px;
+    background: #ccc;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .button:hover {
+    background: #ddd;
+  }
+  
+  /* Add to your existing CSS */
+#drop_zone {
+    background-color: #eee;
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    margin: 10px 0;
+}
+
+#drop_zone p {
+    margin: 0;
+    line-height: 50px;
+    color: #555;
+}
+
+#preview {
+    margin-top: 20px;
+}
