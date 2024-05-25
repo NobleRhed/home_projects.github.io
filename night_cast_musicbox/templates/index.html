@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Running Jellyfin Playlists to Google Mini</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Casting Playlists to Google Mini</h1>
+    
+    <label for="playlistSelect">Choose a playlist:</label>
+    <select id="playlistSelect"></select>
+
+    <label for="deviceSelect">Choose where to cast your Playlist:</label>
+    <select id="deviceSelect"></select>
+
+    <button id="castButton">Send it away!</button>
+
+    <img src="{{ url_for('static', filename='images/musicfox.gif') }}" style="max-width: 100%; max-height: 300px;"></img>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
