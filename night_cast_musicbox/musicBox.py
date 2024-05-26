@@ -2,33 +2,24 @@ from flask import Flask, render_template, request, jsonify
 import pychromecast
 import requests
 import zeroconf
+import time
 
 app = Flask(__name__)
 
 # Jellyfin configuration
 JELLYFIN_ADDRESS = 'http://192.168.2.96:8096'
 JELLYFIN_API = '6d21cffd2399437f95b6cc85589778a3'
-USER_ID = 'Chromcasting'  # Update this with the actual Jellyfin User ID
-
-# Discover Chromecast devices
-class CastListener:
-    def __init__(self):
-        self.devices = {}
-
-    def add_cast(self, uuid, service):
-        self.devices[uuid] = service
+USER_ID = 'Chromecasting'  
 
 # Initialize zeroconf and start discovery
-zconf = zeroconf.Zeroconf()
-listener = CastListener()
-browser = pychromecast.CastBrowser(listener, zconf)
-browser.start_discovery()
-
-# Stop discovery after a delay
-import time
-time.sleep(5)
-browser.stop_discovery()
-zconf.close()
+def discover_chromecasts():
+    zconf = zeroconf.Zeroconf()
+    chromecasts = pychromecast.get_chromecasts(zconf)
+    time.sleep(10)  # Allow some time for discovery
+    zconf.close()
+    devices = [cc.device.friendly_name for cc in chromecasts]
+    print("Discovered Chromecast devices:", devices)  # Debugging statement
+    return devices
 
 @app.route('/')
 def index():
@@ -36,7 +27,7 @@ def index():
 
 @app.route('/playlists', methods=['GET'])
 def get_playlists():
-    url = f"{JELLYFIN_ADDRESS}/Users/{USER_ID}/Items?IncludeItemTypes=Playlist"
+    url = f"{JELLYFIN_ADDRESS}/Users/{USER_ID}/Items?IncludeItemTypes=Playlist&api_key={JELLYFIN_API}"
     headers = {'X-Emby-Token': JELLYFIN_API}
     response = requests.get(url, headers=headers)
     playlists = response.json().get('Items', [])
@@ -44,7 +35,16 @@ def get_playlists():
 
 @app.route('/chromecasts', methods=['GET'])
 def get_chromecasts():
-    devices = [service.friendly_name for service in listener.devices.values()]
+    #devices = discover_chromecasts()
+    devices = [
+        "Master Bedroom speaker",
+        "Serena speaker",
+        "My TV",
+        "Living Room Display",
+        "Theo and Ollie speaker"
+        ]
+    response = jsonify(devices)
+    response.headers.add('Content-Type', 'application/json')
     return jsonify(devices)
 
 @app.route('/cast', methods=['POST'])
@@ -58,6 +58,10 @@ def cast_playlist():
     headers = {'X-Emby-Token': JELLYFIN_API}
     response = requests.get(url, headers=headers)
     items = response.json().get('Items', [])
+    if items == '':
+        print("nothing here")
+    else:
+        print(items)
 
     if not items:
         return jsonify({'status': 'error', 'message': 'No tracks found in playlist'}), 404
@@ -66,16 +70,16 @@ def cast_playlist():
     media_url = f"{JELLYFIN_ADDRESS}/Audio/{items[0]['Id']}/stream.mp3?api_key={JELLYFIN_API}"
 
     # Find Chromecast device and connect
-    chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=[google_mini_name])
-    if not chromecasts:
+    chromecasts = pychromecast.get_chromecasts()
+    device = next((cc for cc in chromecasts if cc.device.friendly_name == google_mini_name), None)
+    if not device:
         return jsonify({'status': 'error', 'message': f"No Chromecast with name {google_mini_name} found"}), 404
     
-    cast = chromecasts[0]
-    cast.wait()
+    device.wait()
 
     # Cast media
-    cast.media_controller.play_media(media_url, 'audio/mpeg')
-    cast.media_controller.block_until_active()
+    device.play_media(media_url, 'audio/mp3')
+    device.block_until_active()
 
     return jsonify({'status': 'success', 'message': 'Your selection is playing on the selected Google Mini'})
 
