@@ -1,6 +1,8 @@
 import time
 import pychromecast
 import zeroconf
+import json
+import os
 
 # Create a listener class
 class MyCastListener:
@@ -25,6 +27,13 @@ browser.stop_discovery()
 print("Discovered Chromecast devices:")
 for device in listener.devices:
     print(device)
+
+# Define the file path for the JSON file
+json_file_path = os.path.join(os.path.dirname(__file__), 'chromecast_devices.json')
+
+# Save discovered devices to a JSON file
+with open(json_file_path, 'w') as f:
+    json.dump(listener.devices, f)
 
 # Cleanup
 zconf.close()

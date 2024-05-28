@@ -3,49 +3,30 @@ import pychromecast
 import requests
 import zeroconf
 import time
+import json
+
 
 app = Flask(__name__)
 
 # Jellyfin configuration
 JELLYFIN_ADDRESS = 'http://192.168.2.96:8096'
-JELLYFIN_API = '6d21cffd2399437f95b6cc85589778a3'
-USER_ID = 'Chromecasting'  
-
-# Initialize zeroconf and start discovery
-def discover_chromecasts():
-    zconf = zeroconf.Zeroconf()
-    chromecasts = pychromecast.get_chromecasts(zconf)
-    time.sleep(10)  # Allow some time for discovery
-    zconf.close()
-    devices = [cc.device.friendly_name for cc in chromecasts]
-    print("Discovered Chromecast devices:", devices)  # Debugging statement
-    return devices
+JELLYFIN_API = '6c81e0f1e3b044d38a326d95e6af74b9'
+USER_ID = 'Chromcasting'  
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-
-@app.route('/playlists', methods=['GET'])
-def get_playlists():
-    url = f"{JELLYFIN_ADDRESS}/Users/{USER_ID}/Items?IncludeItemTypes=Playlist&api_key={JELLYFIN_API}"
-    headers = {'X-Emby-Token': JELLYFIN_API}
-    response = requests.get(url, headers=headers)
-    playlists = response.json().get('Items', [])
-    return jsonify(playlists)
+    jf_address = JELLYFIN_ADDRESS
+    return render_template('login.html', jf_address=jf_address)
 
 @app.route('/chromecasts', methods=['GET'])
 def get_chromecasts():
-    #devices = discover_chromecasts()
-    devices = [
-        "Master Bedroom speaker",
-        "Serena speaker",
-        "My TV",
-        "Living Room Display",
-        "Theo and Ollie speaker"
-        ]
-    response = jsonify(devices)
-    response.headers.add('Content-Type', 'application/json')
-    return jsonify(devices)
+    try:
+        with open('chromecast_devices.json', 'r') as f:
+            devices = json.load(f)
+        return jsonify(devices)
+    except FileNotFoundError:
+        return jsonify({'status': 'error', 'message': 'No Chromecast devices found'}), 404
+
 
 @app.route('/cast', methods=['POST'])
 def cast_playlist():
@@ -58,10 +39,7 @@ def cast_playlist():
     headers = {'X-Emby-Token': JELLYFIN_API}
     response = requests.get(url, headers=headers)
     items = response.json().get('Items', [])
-    if items == '':
-        print("nothing here")
-    else:
-        print(items)
+    print(response.json())
 
     if not items:
         return jsonify({'status': 'error', 'message': 'No tracks found in playlist'}), 404

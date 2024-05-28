@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login to Jellyfin for playlists</h1>
+
+    <div>
+        <img src="{{ url_for('static', filename='images/musicfox.gif') }}" style="max-width: 100%; max-height: 300px;"></img>
+    </div>
+
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            authenticate(username, password);
+        });
+
+        function authenticate(username, password) {
+    const JELLYFIN_URL = "{{ jf_address }}";
+    
+    fetch(`${JELLYFIN_URL}/Users/AuthenticateByName`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+            Username: username,
+            Pw: password
+         })
+        })
+        .then(response => {
+         if (!response.ok) {
+               throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+        console.log('Authentication response:', data); // Check the response in the console
+         if (data.AccessToken) {
+            localStorage.setItem('accessToken', data.AccessToken);
+            window.location.href = '/index.html'; // Redirect to the main page
+           } else {
+            document.getElementById('message').textContent = 'Authentication failed';
+           }
+     })
+        .catch(error => console.error('Error authenticating:', error));
+    }
+    </script>
+</body>
+</html>

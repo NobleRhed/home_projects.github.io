@@ -3,18 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const deviceSelect = document.getElementById('deviceSelect');
     const castButton = document.getElementById('castButton');
 
-    // Fetch playlists from Flask server
-    fetch('/playlists')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(playlist => {
-                const option = document.createElement('option');
-                option.value = playlist.Id;
-                option.textContent = playlist.Name;
-                playlistSelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error fetching playlists:', error));
+     const accessToken = '{{ session["access_token"] }}';
 
     // Fetch Chromecast devices from Flask server
     fetch('/chromecasts')
@@ -44,6 +33,22 @@ document.addEventListener('DOMContentLoaded', function() {
             google_mini_name: selectedDevice
         };
 
+        // Fetch playlists from Jellyfin
+        fetch(`http://192.168.2.96:8096/Users/Chromcasting/Items?IncludeItemTypes=Playlist&api_key=${accessToken}`)
+            .then(response => response.json())
+            .then(data => {
+                // Check if data is an array or an object with an Items property
+                const playlists = Array.isArray(data) ? data : (data.Items || []);
+                playlists.forEach(playlist => {
+                    const option = document.createElement('option');
+                    option.value = playlist.Id;
+                    option.textContent = playlist.Name;
+                    playlistSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching playlists:', error));
+
+        // Send request to cast playlist
         fetch('/cast', {
             method: 'POST',
             headers: {
