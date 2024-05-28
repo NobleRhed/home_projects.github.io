@@ -15,8 +15,7 @@ USER_ID = 'ea92fcad0ab84419845c966d51a87838'
 
 @app.route('/')
 def index():
-    jf_address = JELLYFIN_ADDRESS
-    return render_template('login.html', jf_address=jf_address)
+    return render_template('index.html')
 
 @app.route('/chromecasts', methods=['GET'])
 def get_chromecasts():

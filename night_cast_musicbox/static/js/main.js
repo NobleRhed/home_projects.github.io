@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         // Fetch playlists from Jellyfin
-        fetch(`http://192.168.2.96:8096/Users/Chromcasting/Items?IncludeItemTypes=Playlist&api_key=${accessToken}`)
+        fetch(`http://192.168.2.96:8096/Users/ea92fcad0ab84419845c966d51a87838/Items?IncludeItemTypes=Playlist&api_key=${accessToken}`)
             .then(response => response.json())
             .then(data => {
                 // Check if data is an array or an object with an Items property
