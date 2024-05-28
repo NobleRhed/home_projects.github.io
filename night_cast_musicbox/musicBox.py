@@ -11,12 +11,11 @@ app = Flask(__name__)
 # Jellyfin configuration
 JELLYFIN_ADDRESS = 'http://192.168.2.96:8096'
 JELLYFIN_API = '6c81e0f1e3b044d38a326d95e6af74b9'
-USER_ID = 'Chromcasting'  
+USER_ID = 'ea92fcad0ab84419845c966d51a87838'  
 
 @app.route('/')
 def index():
-    jf_address = JELLYFIN_ADDRESS
-    return render_template('login.html', jf_address=jf_address)
+    return render_template('index.html')
 
 @app.route('/chromecasts', methods=['GET'])
 def get_chromecasts():
@@ -62,4 +61,4 @@ def cast_playlist():
     return jsonify({'status': 'success', 'message': 'Your selection is playing on the selected Google Mini'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host='0.0.0.0', port=5003)

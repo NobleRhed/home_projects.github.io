@@ -15,10 +15,6 @@ def get_playlists():
         'X-Emby-Token': JELLYFIN_API
     }
     
-    api_rep = f"{JELLYFIN_ADDRESS}/Users/Me"
-    users_keyname = api_rep.__getitem__
-
-    print(f"API associated with: {users_keyname}")
 
     print(f"Requesting playlists from: {url}")
     print(f"Headers: {headers}")
