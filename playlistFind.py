@@ -3,7 +3,7 @@ import requests
 # Jellyfin configuration
 JELLYFIN_ADDRESS = 'http://192.168.2.96:8096'
 JELLYFIN_API = '6c81e0f1e3b044d38a326d95e6af74b9'
-USER_ID = 'BenLang'  # Replace with the correct user ID
+USER_ID = 'ea92fcad0ab84419845c966d51a87838'  # Replace with the correct user ID
 
 def get_playlists():
     url = f"{JELLYFIN_ADDRESS}/Users/{USER_ID}/Items"
