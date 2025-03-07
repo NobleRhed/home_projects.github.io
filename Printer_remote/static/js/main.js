@@ -62,3 +62,8 @@ function removeDragData(ev) {
         ev.dataTransfer.clearData();
     }
 }
+
+// TODO: Handle failed print requests
+
+// TODO: Return message if print fails - use newly practiced async with Promises and await
+
