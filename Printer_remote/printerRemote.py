@@ -95,7 +95,7 @@ def file_upload():
             return f"Failed to print file: {e}", 500
         
     # If it's not a POST request, just render the upload form again.
-    return render_template('upload_form.html')
+    return render_template('P_upload.html')
 
 # Main entry point for the application.
 if __name__ == '__main__':
