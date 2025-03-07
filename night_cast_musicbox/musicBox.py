@@ -1,35 +1,33 @@
 from flask import Flask, render_template, request, jsonify
 import pychromecast
 import requests
-import zeroconf
-import time
 import json
-
+import os
 
 app = Flask(__name__)
 
 # Jellyfin configuration
 JELLYFIN_ADDRESS = 'http://192.168.2.96:8096'
 JELLYFIN_API = '6c81e0f1e3b044d38a326d95e6af74b9'
-USER_ID = 'ea92fcad0ab84419845c966d51a87838'  
+USER_ID = 'ea92fcad0ab84419845c966d51a87838'
+
+json_file_path = os.path.join(os.path.dirname(__file__), 'chromecast_devices.json')
+
+# Load Chromecast devices from JSON file
+with open(json_file_path, 'r') as f:
+    chromecast_devices = json.load(f)
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/chromecasts', methods=['GET'])
+@app.route('/chromecasts')
 def get_chromecasts():
-    try:
-        with open('chromecast_devices.json', 'r') as f:
-            devices = json.load(f)
-        return jsonify(devices)
-    except FileNotFoundError:
-        return jsonify({'status': 'error', 'message': 'No Chromecast devices found'}), 404
-
+    return jsonify(chromecast_devices)
 
 @app.route('/cast', methods=['POST'])
 def cast_playlist():
-    data = request.json
+    data = request.form
     playlist_id = data['playlist_id']
     google_mini_name = data['google_mini_name']
 
@@ -38,20 +36,19 @@ def cast_playlist():
     headers = {'X-Emby-Token': JELLYFIN_API}
     response = requests.get(url, headers=headers)
     items = response.json().get('Items', [])
-    print(response.json())
 
     if not items:
         return jsonify({'status': 'error', 'message': 'No tracks found in playlist'}), 404
-    
+
     # Get URL of the first item in the playlist
     media_url = f"{JELLYFIN_ADDRESS}/Audio/{items[0]['Id']}/stream.mp3?api_key={JELLYFIN_API}"
 
     # Find Chromecast device and connect
-    chromecasts = pychromecast.get_chromecasts()
-    device = next((cc for cc in chromecasts if cc.device.friendly_name == google_mini_name), None)
-    if not device:
+    chromecast_name = next((device for device in chromecast_devices if device['friendly_name'] == google_mini_name), None)
+    if not chromecast_name:
         return jsonify({'status': 'error', 'message': f"No Chromecast with name {google_mini_name} found"}), 404
-    
+
+    device = pychromecast.get_chromecast(friendly_name=chromecast_name['friendly_name'])
     device.wait()
 
     # Cast media

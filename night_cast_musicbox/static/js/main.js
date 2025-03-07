@@ -3,12 +3,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const deviceSelect = document.getElementById('deviceSelect');
     const castButton = document.getElementById('castButton');
 
-     const accessToken = '{{ session["access_token"] }}';
+    const accessToken = '{{ session["access_token"] }}';
 
     // Fetch Chromecast devices from Flask server
     fetch('/chromecasts')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch Chromecast devices');
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('Chromecast devices data:', data);
+            if (!Array.isArray(data)) {
+                throw new Error('Chromecast devices data is not an array');
+            }
             data.forEach(device => {
                 const option = document.createElement('option');
                 option.value = device;
@@ -18,35 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => console.error('Error fetching Chromecast devices:', error));
 
-    // Handle cast button click
-    castButton.addEventListener('click', function() {
-        const selectedPlaylist = playlistSelect.value;
-        const selectedDevice = deviceSelect.value;
-
-        if (!selectedPlaylist || !selectedDevice) {
-            alert('Please select both a playlist and a Chromecast device.');
-            return;
-        }
-
+    // Define the cast_playlist function
+    function cast_playlist(playlist_id, google_mini_name) {
         const payload = {
-            playlist_id: selectedPlaylist,
-            google_mini_name: selectedDevice
+            playlist_id: playlist_id,
+            google_mini_name: google_mini_name
         };
-
-        // Fetch playlists from Jellyfin
-        fetch(`http://192.168.2.96:8096/Users/ea92fcad0ab84419845c966d51a87838/Items?IncludeItemTypes=Playlist&api_key=${accessToken}`)
-            .then(response => response.json())
-            .then(data => {
-                // Check if data is an array or an object with an Items property
-                const playlists = Array.isArray(data) ? data : (data.Items || []);
-                playlists.forEach(playlist => {
-                    const option = document.createElement('option');
-                    option.value = playlist.Id;
-                    option.textContent = playlist.Name;
-                    playlistSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error fetching playlists:', error));
 
         // Send request to cast playlist
         fetch('/cast', {
@@ -65,5 +51,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => console.error('Error casting playlist:', error));
+    }
+
+    // Handle cast button click
+    castButton.addEventListener('click', function() {
+        const selectedPlaylist = playlistSelect.value;
+        const selectedDevice = deviceSelect.value;
+
+        if (!selectedPlaylist || !selectedDevice) {
+            alert('Please select both a playlist and a Chromecast device.');
+            return;
+        }
+
+        cast_playlist(selectedPlaylist, selectedDevice);
     });
 });
