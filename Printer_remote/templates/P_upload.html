@@ -25,6 +25,9 @@
             <input type="file" id="fileUpload" name="document" required onchange="showConfirmation()">
             <input type="submit" value="Send it to print!">
         </form>
+        
+        <!-- We have come a long way, take time to update these files to use external stylecss and scripts instead. Fine for now.-->
+
         <div id="fileConfirmation" style="display:none; margin-top: 20px;">
             <img src="{{ url_for('static', filename='images/business_fox.PNG') }}" alt="File ready" style="max-width: 100%; max-height: 300px;">        <p>Got it! Now hit send!</p>
         </div>

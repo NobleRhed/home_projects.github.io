@@ -1,3 +1,5 @@
+# description: Testing on how to discover what chromecast devices are available on the network, and how to connect to them.
+
 import time
 import pychromecast
 import zeroconf

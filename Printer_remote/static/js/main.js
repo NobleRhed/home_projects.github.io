@@ -1,3 +1,8 @@
+
+/**
+ * BEWARE: Doop
+ * show confirmation of file upload. Ensure the preview is displayed for files sent in. Works with drag and drop.
+ */
 function showConfirmation() {
     const confirmation = document.getElementById('fileConfirmation');
     const file = document.getElementById('fileUpload').files[0];
@@ -9,6 +14,10 @@ function showConfirmation() {
     }
 }
 
+/**
+ * 
+ * handles the drag and drop of files. This 
+ */
 function dropHandler(ev) {
     ev.preventDefault();
 
@@ -28,9 +37,18 @@ function dropHandler(ev) {
     removeDragData(ev);
 }
 
+/**
+ * 
+ * prevents the browser from just opening a file dragged into the window. 
+ */
 function dragOverHandler(ev) {
     ev.preventDefault();
 }
+
+/** 
+ * BEWARE: Doop.
+ *  this showConfirmation might be better. compare and contrast their outputs. Here we handle if the file is an image (display in preview box) or not (display file name).
+ */
 
 function showConfirmation() {
     const confirmation = document.getElementById('fileConfirmation');
@@ -53,6 +71,10 @@ function showConfirmation() {
     }
 }
 
+/**
+ * 
+ * Function to remove the drag data. This is called after the file has been processed.
+ */
 function removeDragData(ev) {
     if (ev.dataTransfer.items) {
         // Use DataTransferItemList interface to remove the drag data

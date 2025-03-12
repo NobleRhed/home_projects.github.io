@@ -1,3 +1,6 @@
+# Description: An attempt at getting jellyfin music to be included in another project as "playlists" for ifttt to trigger. DId not work, but will revisit this summer to see if it works using the reverse proxy method.
+
+# Import flask, chromecast stuff, and other elements for web layer interaction
 from flask import Flask, render_template, request, jsonify
 import pychromecast
 import requests
@@ -17,6 +20,7 @@ json_file_path = os.path.join(os.path.dirname(__file__), 'chromecast_devices.jso
 with open(json_file_path, 'r') as f:
     chromecast_devices = json.load(f)
 
+# routings. today (mar 12, 2025) we practiced using npm and node.js to route and use a personal database using a NoSQL. Take learned info during summer project to update this, and ensure it works. 
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -51,10 +55,11 @@ def cast_playlist():
     device = pychromecast.get_chromecast(friendly_name=chromecast_name['friendly_name'])
     device.wait()
 
-    # Cast media
+    # Cast media 
     device.play_media(media_url, 'audio/mp3')
     device.block_until_active()
 
+    # jsonify is crucial as browsers can only read strings, allowing for back and forth processing of data
     return jsonify({'status': 'success', 'message': 'Your selection is playing on the selected Google Mini'})
 
 if __name__ == '__main__':

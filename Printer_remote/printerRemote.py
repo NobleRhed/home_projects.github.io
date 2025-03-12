@@ -17,7 +17,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 # Configure the app to use the defined uploads folder.
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Define which file extensions are allowed for upload.
+# Define which file extensions are allowed for upload. Add to list as needed, but so far this works for most common file types.
 app.config['ALLOWED_EXTENSIONS'] = {
     'txt',
     'pdf',
@@ -97,6 +97,6 @@ def file_upload():
     # If it's not a POST request, just render the upload form again.
     return render_template('P_upload.html')
 
-# Main entry point for the application.
+# Run the app in debug mode. Ensure we can access it locally so its fine for now. Eventually replace with online hosting (not debug mode)
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
