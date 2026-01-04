@@ -1,0 +1,19 @@
+{
+  "tools": [
+    {
+      "id": "uppercase",
+      "name": "Convert to Uppercase",
+      "description": "Converts all text to uppercase"
+    },
+    {
+      "id": "lowercase",
+      "name": "Convert to Lowercase",
+      "description": "Converts all text to lowercase"
+    },
+    {
+      "id": "reverse",
+      "name": "Reverse Text",
+      "description": "Reverses the order of characters in the text"
+    }
+  ]
+}
